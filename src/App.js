@@ -113,12 +113,9 @@ class App extends Component {
   };
 
   handleSelectedFilter = status => {
-    this.setState(
-      {
-        selectedStatus: status
-      },
-      () => console.log(this.state.selectedStatus)
-    );
+    this.setState({
+      selectedStatus: status
+    });
   };
 
   render() {
