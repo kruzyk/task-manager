@@ -24,7 +24,7 @@ class App extends Component {
         isEditing: false
       }
     ]
-  };
+  }; 
   addTask = title => {
     this.setState({
       tasks: [
