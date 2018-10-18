@@ -4,6 +4,7 @@ class App extends Component {
   state = {
     taskTitle: "",
     titleEdited: "",
+    selectedStatus: "All",
     tasks: [
       {
         id: 1,
@@ -24,7 +25,7 @@ class App extends Component {
         isEditing: false
       }
     ]
-  }; 
+  };
   addTask = title => {
     this.setState({
       tasks: [
@@ -60,9 +61,9 @@ class App extends Component {
           taskId !== task.id
             ? task
             : {
-              ...task,
-              isDone: !task.isDone
-            }
+                ...task,
+                isDone: !task.isDone
+              }
       )
     });
   };
@@ -82,9 +83,9 @@ class App extends Component {
           taskId !== task.id
             ? task
             : {
-              ...task,
-              isEditing: !task.isEditing
-            }
+                ...task,
+                isEditing: !task.isEditing
+              }
       )
     });
   };
@@ -96,10 +97,10 @@ class App extends Component {
           taskId !== task.id
             ? task
             : {
-              ...task,
-              title: this.state.titleEdited,
-              isEditing: !task.isEditing
-            }
+                ...task,
+                title: this.state.titleEdited,
+                isEditing: !task.isEditing
+              }
       )
     });
   };
@@ -107,6 +108,15 @@ class App extends Component {
   handleEdit = event => {
     event.preventDefault();
     this.setState({ titleEdited: event.target.value });
+  };
+
+  handleSelectedFilter = status => {
+    this.setState(
+      {
+        selectedStatus: status
+      },
+      () => console.log(this.state.selectedStatus)
+    );
   };
 
   render() {
@@ -128,37 +138,50 @@ class App extends Component {
             <input id="toggle-all" className="toggle-all" type="checkbox" />
             <label for="toggle-all" />
             <ul className="todo-list">
-              {this.state.tasks.map(task => (
-                <li
-                  className={
-                    task.isDone ? "completed" : task.isEditing ? "editing" : ""
-                  }
-                  key={task.id}
-                >
-                  <div className="view">
+              {this.state.tasks
+                .filter(
+                  task =>
+                    this.state.selectedStatus === "All"
+                      ? true
+                      : this.state.selectedStatus === "Active"
+                        ? task.isDone === false
+                        : task.isDone === true
+                )
+                .map(task => (
+                  <li
+                    className={
+                      task.isDone
+                        ? "completed"
+                        : task.isEditing
+                          ? "editing"
+                          : ""
+                    }
+                    key={task.id}
+                  >
+                    <div className="view">
+                      <input
+                        className="toggle"
+                        type="checkbox"
+                        onClick={() => this.handleTaskDone(task.id)}
+                      />
+                      <label
+                        onDoubleClick={() => this.handleTaskEditStatus(task.id)}
+                      >
+                        {task.title}
+                      </label>
+                      <button
+                        className="destroy"
+                        onClick={() => this.removeTask(task.id)}
+                      />
+                    </div>
                     <input
-                      className="toggle"
-                      type="checkbox"
-                      onClick={() => this.handleTaskDone(task.id)}
+                      className="edit"
+                      value={this.state.titleEdited}
+                      onChange={this.handleEdit}
+                      onMouseLeave={() => this.editTask(task.id)}
                     />
-                    <label
-                      onDoubleClick={() => this.handleTaskEditStatus(task.id)}
-                    >
-                      {task.title}
-                    </label>
-                    <button
-                      className="destroy"
-                      onClick={() => this.removeTask(task.id)}
-                    />
-                  </div>
-                  <input
-                    className="edit"
-                    value={this.state.titleEdited}
-                    onChange={this.handleEdit}
-                    onMouseLeave={() => this.editTask(task.id)}
-                  />
-                </li>
-              ))}
+                  </li>
+                ))}
             </ul>
           </section>
           <footer className="footer">
@@ -172,21 +195,39 @@ class App extends Component {
             </span>
             <ul className="filters">
               <li>
-                <a href="#/" className="selected">
+                <a
+                  href="#/"
+                  className={
+                    this.state.selectedStatus === "All" ? "selected" : ""
+                  }
+                  onClick={() => this.handleSelectedFilter("All")}
+                >
                   All
                 </a>
               </li>
               <span> </span>
               <li>
-                <a href="#/active" className="">
-                {/* {this.state.tasks.filter(task => task.isDone !== true)} */}
+                <a
+                  href="#/active"
+                  className={
+                    this.state.selectedStatus === "Active" ? "selected" : ""
+                  }
+                  onClick={() => this.handleSelectedFilter("Active")}
+                >
+                  {/* {this.state.tasks.filter(task => task.isDone !== true)} */}
                   Active
                 </a>
               </li>
               <span> </span>
               <li>
-                <a href="#/completed" className="">
-                {/* {this.state.tasks.filter(task => task.isDone == true)} */}
+                <a
+                  href="#/completed"
+                  className={
+                    this.state.selectedStatus === "Completed" ? "selected" : ""
+                  }
+                  onClick={() => this.handleSelectedFilter("Completed")}
+                >
+                  {/* {this.state.tasks.filter(task => task.isDone == true)} */}
                   Completed
                 </a>
               </li>
