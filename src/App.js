@@ -37,6 +37,9 @@ class App extends Component {
         isDone: false,
         isEditing: false
       });
+    this.setState({
+      taskTitle: ""
+    });
   };
 
   handleSubmit = event => {
