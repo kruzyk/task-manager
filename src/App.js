@@ -28,6 +28,27 @@ class App extends Component {
     ]
   };
 
+  setNewTask = snapshot => {
+    this.setState({
+      tasks: Object.entries(snapshot.val() || {})
+        .map(([id, other]) => ({ id, ...other }))
+        .reverse()
+    });
+  };
+
+  componentDidMount() {
+    this.componentIsMount = true;
+    this.ref = firebase.database().ref("/publicTodos/");
+    this.ref.on("value", this.setNewTask);
+  }
+
+  componentWillUnmount() {
+    this.componentIsMount = false;
+    if (this.ref) {
+      this.ref.off("value", this.setNewTask);
+    }
+  }
+
   addTask = title => {
     firebase
       .database()
@@ -213,7 +234,6 @@ class App extends Component {
                   }
                   onClick={() => this.handleSelectedFilter("Active")}
                 >
-                  {/* {this.state.tasks.filter(task => task.isDone !== true)} */}
                   Active
                 </a>
               </li>
@@ -226,7 +246,6 @@ class App extends Component {
                   }
                   onClick={() => this.handleSelectedFilter("Completed")}
                 >
-                  {/* {this.state.tasks.filter(task => task.isDone == true)} */}
                   Completed
                 </a>
               </li>
