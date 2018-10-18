@@ -27,18 +27,16 @@ class App extends Component {
       }
     ]
   };
+
   addTask = title => {
-    this.setState({
-      tasks: [
-        {
-          id: Date.now(),
-          title: title,
-          isDone: false,
-          isEditing: false
-        }
-      ].concat(this.state.tasks),
-      taskTitle: ""
-    });
+    firebase
+      .database()
+      .ref("publicTodos/")
+      .push({
+        title: title,
+        isDone: false,
+        isEditing: false
+      });
   };
 
   handleSubmit = event => {
