@@ -4,10 +4,9 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./setupFirebase";
-import firebase from "firebase";
 
 ReactDOM.render(
-  <App firebaseRef={firebase.database().ref("publicTodos")} />,
+  <App />,
   document.getElementById("root")
 );
 
