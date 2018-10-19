@@ -3,8 +3,8 @@ import firebase from "firebase";
 
 class App extends Component {
   state = {
-    taskTitle: "",
-    titleEdited: "",
+    taskTitleAdd: "",
+    taskTitleEdit: "",
     selectedStatus: "All",
     tasks: [
       {
@@ -65,10 +65,10 @@ class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.state.taskTitle === "") {
+    if (this.state.taskTitleAdd === "") {
       return;
     }
-    this.addTask(this.state.taskTitle);
+    this.addTask(this.state.taskTitleAdd);
   };
 
   handleChange = event => {
@@ -100,7 +100,7 @@ class App extends Component {
   handleTaskEditStatus = taskId => {
     const taskToEdit = this.state.tasks.find(task => task.id === taskId);
     this.setState({
-      titleEdited: taskToEdit.title,
+      taskTitleEdit: taskToEdit.title,
       tasks: this.state.tasks.map(
         task =>
           taskId !== task.id
@@ -121,7 +121,7 @@ class App extends Component {
             ? task
             : {
                 ...task,
-                title: this.state.titleEdited,
+                title: this.state.taskTitleEdit,
                 isEditing: !task.isEditing
               }
       )
@@ -130,7 +130,7 @@ class App extends Component {
 
   handleEdit = event => {
     event.preventDefault();
-    this.setState({ titleEdited: event.target.value });
+    this.setState({ taskTitleEdit: event.target.value });
   };
 
   handleSelectedFilter = status => {
@@ -149,7 +149,7 @@ class App extends Component {
               <input
                 className="new-todo"
                 placeholder="What needs to be done?"
-                value={this.state.taskTitle}
+                value={this.state.taskTitleAdd}
                 onChange={this.handleChange}
               />
             </form>
@@ -196,7 +196,7 @@ class App extends Component {
                     </div>
                     <input
                       className="edit"
-                      value={this.state.titleEdited}
+                      value={this.state.taskTitleEdit}
                       onChange={this.handleEdit}
                       onMouseLeave={() => this.editTask(task.id)}
                     />
