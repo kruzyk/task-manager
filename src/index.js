@@ -4,11 +4,12 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./setupFirebase";
+import firebase from 'firebase'
 import { TaskProvider } from "./TaskContext";
 
 ReactDOM.render(
   <TaskProvider>
-    <App />
+    <App firebaseRef={firebase.database().ref('publicTodos')}/>
   </TaskProvider>,
   document.getElementById("root")
 );

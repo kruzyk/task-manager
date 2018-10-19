@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import firebase from "firebase";
 import { TaskConsumer } from "./TaskContext";
 
 const buttonNames = ["All", "Completed", "Active"];
@@ -24,14 +23,11 @@ class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    firebase
-      .database()
-      .ref("/publicTodos")
-      .push({
-        title: this.state.taskTitleAdd,
-        isDone: false,
-        inEdit: false
-      });
+    this.props.firebaseRef.push({
+      title: this.state.taskTitleAdd,
+      isDone: false,
+      inEdit: false
+    });
 
     this.setState({
       taskTitleAdd: ""
@@ -39,31 +35,19 @@ class App extends Component {
   };
 
   makeHandleDestroyClick = taskId => event => {
-    firebase
-      .database()
-      .ref("publicTodos")
-      .child(taskId)
-      .remove();
+    this.props.firebaseRef.child(taskId).remove();
   };
 
   makeHandleCheckboxChange = task => event => {
-    firebase
-      .database()
-      .ref("publicTodos")
-      .child(task.id)
-      .update({
-        isDone: !task.isDone
-      });
+    this.props.firebaseRef.child(task.id).update({
+      isDone: !task.isDone
+    });
   };
 
   makeHandleEnterEditMode = task => event => {
-    firebase
-      .database()
-      .ref("publicTodos")
-      .child(task.id)
-      .update({
-        inEdit: true
-      });
+    this.props.firebaseRef.child(task.id).update({
+      inEdit: true
+    });
 
     this.setState({
       taskTitleEdit: task.title
@@ -82,14 +66,10 @@ class App extends Component {
   };
 
   updateTaskTitle = taskId => {
-    firebase
-      .database()
-      .ref("publicTodos")
-      .child(taskId)
-      .update({
-        title: this.state.taskTitleEdit,
-        inEdit: false
-      });
+    this.props.firebaseRef.child(taskId).update({
+      title: this.state.taskTitleEdit,
+      inEdit: false
+    });
   };
 
   render() {
