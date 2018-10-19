@@ -11,19 +11,19 @@ class App extends Component {
         id: 1,
         title: "Read pdfs",
         isDone: false,
-        isEditing: false
+        inEdit: false
       },
       {
         id: 2,
         title: "Learn React",
         isDone: true,
-        isEditing: false
+        inEdit: false
       },
       {
         id: 3,
         title: "Go to sleep",
         isDone: false,
-        isEditing: false
+        inEdit: false
       }
     ]
   };
@@ -56,10 +56,10 @@ class App extends Component {
       .push({
         title: title,
         isDone: false,
-        isEditing: false
+        inEdit: false
       });
     this.setState({
-      taskTitle: ""
+      taskTitleAdd: ""
     });
   };
 
@@ -73,7 +73,7 @@ class App extends Component {
 
   handleChange = event => {
     this.setState({
-      taskTitle: event.target.value
+      taskTitleAdd: event.target.value
     });
   };
 
@@ -107,7 +107,7 @@ class App extends Component {
             ? task
             : {
                 ...task,
-                isEditing: !task.isEditing
+                inEdit: !task.inEdit
               }
       )
     });
@@ -122,7 +122,7 @@ class App extends Component {
             : {
                 ...task,
                 title: this.state.taskTitleEdit,
-                isEditing: !task.isEditing
+                inEdit: !task.inEdit
               }
       )
     });
@@ -136,6 +136,24 @@ class App extends Component {
   handleSelectedFilter = status => {
     this.setState({
       selectedStatus: status
+    });
+  };
+
+  makeHandleInputKeypress = taskId => event => {
+    if (event.key !== "Enter") {
+      return;
+    }
+    this.setState({
+      tasks: this.state.tasks.map(
+        task =>
+          task.id !== taskId
+            ? task
+            : {
+                ...task,
+                title: this.state.taskTitleEdit,
+                inEdit: false
+              }
+      )
     });
   };
 
@@ -172,7 +190,7 @@ class App extends Component {
                     className={
                       task.isDone
                         ? "completed"
-                        : task.isEditing
+                        : task.inEdit
                           ? "editing"
                           : ""
                     }
@@ -198,6 +216,7 @@ class App extends Component {
                       className="edit"
                       value={this.state.taskTitleEdit}
                       onChange={this.handleEdit}
+                      onKeyPress={this.makeHandleInputKeypress(task.id)}
                       onMouseLeave={() => this.editTask(task.id)}
                     />
                   </li>
