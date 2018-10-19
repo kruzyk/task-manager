@@ -4,9 +4,12 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./setupFirebase";
+import { AuthProvider } from "./AuthContext";
 
 ReactDOM.render(
-  <App />,
+  <AuthProvider>
+    <App />
+  </AuthProvider>,
   document.getElementById("root")
 );
 
