@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { TaskConsumer } from "./TaskContext";
 
 const buttonNames = ["All", "Completed", "Active"];
 const filters = {
@@ -12,8 +11,21 @@ class App extends Component {
   state = {
     taskTitleAdd: "",
     taskTitleEdit: "",
-    activeButtonName: "All"
+    activeButtonName: "All",
+    tasks: []
   };
+
+  componentDidMount() {
+    this.props.firebaseRef.on("value", snapshot => {
+      const tasks = Object.entries(snapshot.val() || {})
+        .map(([id, value]) => ({ id, ...value }))
+        .reverse();
+
+      this.setState({
+        tasks
+      });
+    });
+  }
 
   makeHandleChange = fieldName => event => {
     this.setState({
@@ -91,58 +103,44 @@ class App extends Component {
             <input id="toggle-all" className="toggle-all" type="checkbox" />
             <label for="toggle-all" />
             <ul className="todo-list">
-              <TaskConsumer>
-                {({ tasks }) =>
-                  tasks
-                    .filter(filters[this.state.activeButtonName])
-                    .map(task => (
-                      <li
-                        key={task.id}
-                        className={
-                          task.inEdit
-                            ? "editing"
-                            : task.isDone
-                              ? "completed"
-                              : ""
-                        }
-                      >
-                        <div className="view">
-                          <input
-                            className="toggle"
-                            type="checkbox"
-                            checked={task.isDone}
-                            onChange={this.makeHandleCheckboxChange(task)}
-                          />
-                          <label
-                            onDoubleClick={this.makeHandleEnterEditMode(task)}
-                          >
-                            {task.title}
-                          </label>
-                          <button
-                            className="destroy"
-                            onClick={this.makeHandleDestroyClick(task.id)}
-                          />
-                        </div>
-                        <input
-                          className="edit"
-                          value={this.state.taskTitleEdit}
-                          onKeyPress={this.makeHandleInputKeypress(task.id)}
-                          onChange={this.makeHandleChange("taskTitleEdit")}
-                          onMouseLeave={this.makeHandleMouseLeave(task.id)}
-                        />
-                      </li>
-                    ))
-                }
-              </TaskConsumer>
+              {this.state.tasks
+                .filter(filters[this.state.activeButtonName])
+                .map(task => (
+                  <li
+                    key={task.id}
+                    className={
+                      task.inEdit ? "editing" : task.isDone ? "completed" : ""
+                    }
+                  >
+                    <div className="view">
+                      <input
+                        className="toggle"
+                        type="checkbox"
+                        checked={task.isDone}
+                        onChange={this.makeHandleCheckboxChange(task)}
+                      />
+                      <label onDoubleClick={this.makeHandleEnterEditMode(task)}>
+                        {task.title}
+                      </label>
+                      <button
+                        className="destroy"
+                        onClick={this.makeHandleDestroyClick(task.id)}
+                      />
+                    </div>
+                    <input
+                      className="edit"
+                      value={this.state.taskTitleEdit}
+                      onKeyPress={this.makeHandleInputKeypress(task.id)}
+                      onChange={this.makeHandleChange("taskTitleEdit")}
+                      onMouseLeave={this.makeHandleMouseLeave(task.id)}
+                    />
+                  </li>
+                ))}
             </ul>
           </section>
           <footer className="footer">
             <span className="todo-count">
-              <TaskConsumer>
-                {({ tasks }) => (
-                  <strong>{tasks.filter(filters.Active).length}</strong>
-                )}
-              </TaskConsumer>
+              <strong>{this.state.tasks.filter(filters.Active).length}</strong>
               <span> </span>
               <span>items</span>
               <span> left</span>
